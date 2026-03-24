@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from 'recharts'
 
 export default function ExpenseCard({ data }) {
+  const [isMounted, setIsMounted] = useState(false)
+  useEffect(() => setIsMounted(true), [])
   const ex = data.expenseDrag
   const formatLakhs = (val) => `${(val / 100000).toFixed(1)}L`
   
@@ -44,21 +46,23 @@ export default function ExpenseCard({ data }) {
 
       {/* Bottom Row: Chart */}
       <div className="flex-1 min-h-[160px] md:min-h-[200px] w-full mt-auto relative mb-6">
-        <ResponsiveContainer width="100%" height={200}>
-          <AreaChart width={undefined} data={chartData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
-            <defs>
-              <linearGradient id="colorOptimal" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#FEF2F2" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#FEF2F2" stopOpacity={0.1}/>
-              </linearGradient>
-            </defs>
-            <XAxis dataKey="year" axisLine={true} tickLine={false} tick={{ fontSize: 11, fill: '#999999' }} dy={10} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#999999' }} tickFormatter={formatLakhs} />
-            
-            <Area type="monotone" dataKey="optimal" stroke="#E8002D" strokeWidth={2} fillOpacity={1} fill="url(#colorOptimal)" />
-            <Area type="monotone" dataKey="current" stroke="#111111" strokeWidth={2} fill="none" />
-          </AreaChart>
-        </ResponsiveContainer>
+        {isMounted && (
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart width={undefined} data={chartData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorOptimal" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#FEF2F2" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#FEF2F2" stopOpacity={0.1}/>
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="year" axisLine={true} tickLine={false} tick={{ fontSize: 11, fill: '#999999' }} dy={10} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#999999' }} tickFormatter={formatLakhs} />
+              
+              <Area type="monotone" dataKey="optimal" stroke="#E8002D" strokeWidth={2} fillOpacity={1} fill="url(#colorOptimal)" />
+              <Area type="monotone" dataKey="current" stroke="#111111" strokeWidth={2} fill="none" />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
         
         {/* Simple Legend */}
         <div className="absolute top-0 left-8 flex flex-col gap-1 pointer-events-none">

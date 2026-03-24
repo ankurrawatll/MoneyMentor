@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell } from 'recharts'
 
 export default function XIRRCard({ data }) {
+  const [isMounted, setIsMounted] = useState(false)
+  useEffect(() => setIsMounted(true), [])
   const xirrColor = data.xirr < 10 ? 'text-et-red' : data.xirr > 12 ? 'text-[#16A34A]' : 'text-et-black'
   
   const chartData = [
@@ -29,17 +32,19 @@ export default function XIRRCard({ data }) {
         {/* Right Side - Comparison */}
         <div className="w-full lg:w-[40%] flex flex-col justify-end min-h-[160px]">
           <div className="h-full w-full relative">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
-                <XAxis type="number" hide />
-                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={90} tick={{ fontSize: 11, fill: '#555555', fontWeight: 500 }} />
-                <Bar dataKey="value" radius={[0, 2, 2, 0]} barSize={12} label={{ position: 'right', fill: '#111111', fontSize: 11, fontWeight: 700, formatter: (val) => `${val}%` }}>
-                  {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            {isMounted && (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
+                  <XAxis type="number" hide />
+                  <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={90} tick={{ fontSize: 11, fill: '#555555', fontWeight: 500 }} />
+                  <Bar dataKey="value" radius={[0, 2, 2, 0]} barSize={12} label={{ position: 'right', fill: '#111111', fontSize: 11, fontWeight: 700, formatter: (val) => `${val}%` }}>
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 

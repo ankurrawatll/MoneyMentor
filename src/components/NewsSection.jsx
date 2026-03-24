@@ -34,16 +34,20 @@ export default function NewsSection({ data }) {
         }
         
         const fundName = data.funds[0]?.name?.split(' ').slice(0, 3).join(' ') || 'mutual fund India'
-        const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(fundName + ' mutual fund')}&lang=en&country=in&max=3&apikey=${apiKey}`
+        const targetUrl = `https://gnews.io/api/v4/search?q=${encodeURIComponent(fundName + ' mutual fund')}&lang=en&country=in&max=3&apikey=${apiKey}`
+        const proxiedUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`
         
-        const res = await fetch(url)
-        const json = await res.json()
+        const res = await fetch(proxiedUrl)
+        const proxyData = await res.json()
+        const json = JSON.parse(proxyData.contents)
+
         if (json.articles && json.articles.length > 0) {
           setNews(json.articles.slice(0, 3))
         } else {
           setNews(fallback)
         }
       } catch (e) {
+        console.warn('News fetch failed (possibly CORS or API limit), using fallback.', e)
         setNews(fallback)
       }
     }
