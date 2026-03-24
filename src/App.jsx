@@ -16,10 +16,14 @@ function App() {
   
   const [taxData, setTaxData] = useState(null)
   const [taxFormData, setTaxFormData] = useState(null)
+  const [loadingStep, setLoadingStep] = useState(1)
+
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
   const handleFileUpload = async (file) => {
     try {
       setError('')
+      setLoadingStep(1)
       setScreen('loading')
       
       const text = await extractTextFromPDF(file)
@@ -28,7 +32,16 @@ function App() {
         throw new Error(`Could not extract sufficient text from the PDF (found ${text?.length || 0} chars). Please ensure it is a digital CAMS statement, not a scan/image.`)
       }
       
+      setLoadingStep(2)
+      await delay(800) // Visual smoothness
+      
       const resultData = await analyzePortfolio(text)
+      
+      setLoadingStep(3)
+      await delay(800)
+      
+      setLoadingStep(4)
+      await delay(800)
       
       setData(resultData)
       setScreen('dashboard')
@@ -52,7 +65,7 @@ function App() {
         />
       )}
       
-      {screen === 'loading' && <LoadingScreen />}
+      {screen === 'loading' && <LoadingScreen currentStep={loadingStep} />}
       
       {screen === 'dashboard' && (
         <Dashboard 
