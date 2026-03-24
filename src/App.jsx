@@ -25,7 +25,7 @@ function App() {
       const text = await extractTextFromPDF(file)
       
       if (!text || text.trim().length < 100) {
-        throw new Error('Could not extract sufficient text from the PDF. Please ensure it is a valid CAMS statement.')
+        throw new Error(`Could not extract sufficient text from the PDF (found ${text?.length || 0} chars). Please ensure it is a digital CAMS statement, not a scan/image.`)
       }
       
       const resultData = await analyzePortfolio(text)

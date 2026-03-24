@@ -15,16 +15,20 @@ export async function extractTextFromPDF(file) {
         const pdf = await loadingTask.promise;
         
         let fullText = '';
+        console.log(`[PDF] Document loaded with ${pdf.numPages} pages.`);
         
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const textContent = await page.getTextContent();
           const pageText = textContent.items
-            .map(item => item.str)
+            .map(item => item.str || '')
             .join(' ');
+          
+          console.log(`[PDF] Page ${i} extracted ${pageText.length} chars.`);
           fullText += pageText + '\n';
         }
         
+        console.log(`[PDF] Total extracted content length: ${fullText.trim().length}`);
         resolve(fullText);
       } catch (err) {
         reject(err);
