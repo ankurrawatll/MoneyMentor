@@ -11,7 +11,11 @@ export async function extractTextFromPDF(file) {
     reader.onload = async function() {
       try {
         const typedarray = new Uint8Array(this.result);
-        const loadingTask = pdfjsLib.getDocument({ data: typedarray });
+        const loadingTask = pdfjsLib.getDocument({ 
+          data: typedarray,
+          cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/cmaps/`,
+          cMapPacked: true,
+        });
         const pdf = await loadingTask.promise;
         
         let fullText = '';
